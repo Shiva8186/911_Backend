@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
+import requests
+
 #Initializing the Fast API object
 app = FastAPI()
 
@@ -12,6 +14,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# To get the file from Blob Storage
+@app.on_event("startup")
+async def Startup():
+    # Blob URL
+    blob_url = "https://911dataset.blob.core.windows.net/dataset/911_call_dataset.csv"
+    # Path to save the downloaded file
+    save_path = "assets/911_call_dataset.csv"
+    # Download the file
+    response = requests.get(blob_url)
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Write the content to a local file
+        with open(save_path, 'wb') as file:
+            file.write(response.content)
+        print("File downloaded successfully!")
+    else:
+        print("Failed to download the file:", response.status_code)
 
 #To calculate calls per year
 @app.get("/callsperyear")
