@@ -31,7 +31,7 @@ async def Startup():
             file.write(response.content)
         print("File downloaded successfully!")
     else:
-        print("Failed to download the file:", response.status_code)
+        print("Failed to download the file :", response.status_code)
 
 #To calculate calls per year
 @app.get("/callsperyear")
